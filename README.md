@@ -1,1 +1,28 @@
 # Injury_Prediction_MidLong_Distance_Runners
+
+## Aim of Project:
+This project aims in comparing various machine learning models performance on predicting overused injuries in athletes running middle and long distances.
+
+## Source of Data
+Data were found on a very interesting github repository of [josedv82](https://github.com/josedv82/public_sport_science_datasets), containing open source datasets relative to sports science. More information can be found on the original source [https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/UWU9PV](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/UWU9PV). The dataset also exists on [kaggle](https://www.kaggle.com/shashwatwork/injury-prediction-for-competitive-runners/version/1?select=week_approach_maskedID_timeseries.csv). The authors made this dataset available are S. Lovdal, Ruud J. R. Den Hartigh, G. Azzopardi and the related publication is S. Lovdal, Ruud J. R. Den Hartigh, G. Azzopardi, "Injury Prediction in Competitive Runners with Machine Learning", International Journal of Sports Physiology and Performance, 2020.
+
+## Aknowledgements
+S. Lovdal, Ruud J. R. Den Hartigh, G. Azzopardi, "Injury Prediction in Competitive Runners with Machine Learning", International Journal of Sports Physiology and Performance, 2020
+
+## Project Description
+The dataset consists of two files being in csv format. One file contains data, where each instance is a different day of a specified athlete ID. Each day contains information of the previous 7 days before each instance. Variables are relative to training load, perceived exertion, perceived success etc. The other file contains week information, specifically 3 weeks before each instance. Variables are aggregated data per week, before each instance, for example average data for 3rd week before, 2nd week before and 1st week before instance. Target column is injury column which defines if the current day was a regular healthy day (0) or if it was an injury day (1). As it is expected dataset is heavily imbalanced, because injury days are far less than healthy days so there is need for special treatment. The basic steps of this project are the following:
+* Perceived exertion column on the original dataset has a value of -0.01 if the athlete had not done training that day. However perceived exertion ranges on 0 to 1. Thus -0.01 value was replaced with 0 in the dataset, since no training means 0 training exertion. This was done because it would cause problems later on the models building stage.
+* Four new features were constructed, Acute Load, Total Weekly Distance, Monotony and Strain. This was done to check later if the model can perform well with just these 4 variables instead of having the need for a high dimensional dataset to predict injuries. **External load** in the scientific literature is usually defined as training duration * perceived exertion. However because in this dataset there is no information regarding training duration, **running distance * perceived exertion per training** was used instead. The **7 day average of external loads** is defined as **Acute Load**. **Total Weekly Distance** was defined as the **sum of the 7 day training distances**. Monotony is defined as **7 day average of external load / standard deviation of the 7 days external load**. Last, **Strain** was defined as **7 day average of external load, squared / standard deviation of the 7 days external load**. It's important to note that some of these variables contain redundant information relative to each other as well as to the whole dataset. For more information regarding these variables as a practical guide and their limitations, the following papers are recommended [https://bjsm.bmj.com/content/50/5/273](https://bjsm.bmj.com/content/50/5/273), [https://www.ncbi.nlm.nih.gov/labs/pmc/articles/PMC5394138/](https://www.ncbi.nlm.nih.gov/labs/pmc/articles/PMC5394138/). These new features computed per athlete instance and were added to the original dataset and instances containg NaN values were dropped. New data were saved in excel format and the file name is run_injur_with_acuteloads.xlsx
+* A new file was created named concat-daily-weekly, where the two original csv files were merged on the same dates per athlete ID in order to test a larger dataset containing 7day data as well as 3 weeks data information. It contains fewer instances from the other files because some athletes didn't have the same number of data on daily and weekly files.
+* EDA and feature selection methods were applied
+* Five different machine learning models were built. Because target column is heavy imbalanced, various techniques were implemented to test performance. Performance metrics selected were Confusion Matrix, Area Under Curve, Sensitivity and Specificity because of the heavy imbalance. Random Resampling and Bagging of 9 XGBoost models was based on the methods section in the original authors paper, but it was performed in a slightly different way. The following models were tested:
+1. Weighted XGBoost
+2. SMOTE algorithm for upsampling minority class combined with random undersampling of the majority class and XGBoost
+3. Random upsampling combined with random undersampling and XGBoost
+4. Random upsampling combined with random undersampling and Bagging of 9 XGBoost models with Platt's Scaling
+5. Neural Networks model
+* As test data, the last 10 athletes were used who had above 2000 instances combined and around 50 injuries among them.
+
+## Notes
+* Concatenated data from 7days and 3 weeks before instance performed poorer than just 7days data. 
+* The new 4 features isolated also did not perform better than the 7day data given in the daily csv. 
