@@ -20,7 +20,7 @@ The dataset consists of two files being in csv format. One file contains data, w
 2. SMOTE algorithm for upsampling minority class combined with random undersampling of the majority class and XGBoost
 3. Random upsampling combined with random undersampling and XGBoost
 4. Random upsampling combined with random undersampling and Bagging of 9 XGBoost models with Platt's Scaling
-5. Neural Networks model
+5. Deep Learning model with Tensorflow
 * As test data, the last 10 athletes were used who had above 2000 instances combined and around 50 injuries among them.
 
 ## Notes
